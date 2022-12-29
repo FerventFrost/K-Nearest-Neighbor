@@ -24,5 +24,5 @@ knn = KNeighborsClassifier()
 knn.fit(TrainData,TrainLabel)
 
 #Make Predictions
-Predictions = knn.predict(TrainData)
-print(accuracy_score(Predictions, TrainLabel))
+Predictions = knn.predict(TestData)
+print(accuracy_score(Predictions, TestLabel))
