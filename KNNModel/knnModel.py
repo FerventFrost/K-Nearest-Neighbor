@@ -4,6 +4,12 @@ import sklearn.metrics as Metrics
 import UtilityFunctions as Utility
 import requests
 
+#Constants
+TP = 0
+FP = 1
+FN = 2
+TN = 3
+
 #this is unused URL
 ClassURL = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.names"
 DataURL = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
@@ -29,45 +35,77 @@ Accuracy = Metrics.accuracy_score(TestLabel, Predictions)
 Recall = Metrics.recall_score(TestLabel, Predictions, average='micro')
 
 #Print Results
+print(f'''
+###################################################################
+SKLearn Metrics Calculations
+###################################################################
+''')
 print(f"Model Accuracy is {Accuracy}")
-print(F"Model Error Rate is {1 - Accuracy}")
+print(F"Model Error Rate is {FP - Accuracy}")
 print(f"Model Sensitivity is {Recall}")
 
 #Confusion Matrix
+print(f'''
+###################################################################
+Confusion Matrix Calculations
+###################################################################
+''')
 matrix_confusion = Metrics.confusion_matrix(TestLabel, Predictions, labels=['Iris-setosa', 'Iris-virginica', 'Iris-versicolor'])
 IrisSetosa, IrisVirginica, IrisVersicolor = Utility.IrisClassifierTable(matrix_confusion)
 
 #Model Accuracy
-SetosaAccuracy = (IrisSetosa[0] + IrisSetosa[3]) / sum(IrisSetosa)
-VirginicaAccuracy = (IrisVirginica[0] + IrisVirginica[3]) / sum(IrisVirginica)
-VersicolorAccuracy = (IrisVersicolor[0] + IrisVersicolor[3]) / sum(IrisVersicolor)
+SetosaAccuracy = (IrisSetosa[TP] + IrisSetosa[TN]) / sum(IrisSetosa)
+VirginicaAccuracy = (IrisVirginica[TP] + IrisVirginica[TN]) / sum(IrisVirginica)
+VersicolorAccuracy = (IrisVersicolor[TP] + IrisVersicolor[TN]) / sum(IrisVersicolor)
 TotalAccuracy = (SetosaAccuracy + VirginicaAccuracy + VersicolorAccuracy) / 3
 print(f"Model Accuracy using confusion matirx is {TotalAccuracy}")
 
 #Model Error Rate
-print(f"Model Error Rate using confusion matirx is {1- TotalAccuracy}")
+print(f"Model Error Rate using confusion matirx is {FP- TotalAccuracy}")
 
 #Model False Positive Rate
-SetosaFPR = IrisSetosa[1] / (IrisSetosa[1] + IrisSetosa[3])
-VirginicaFPR = IrisVirginica[1] / (IrisVirginica[1] + IrisVirginica[3])
-VersicolorFPR = IrisVersicolor[1] / (IrisVersicolor[1] + IrisVersicolor[3])
+SetosaFPR = IrisSetosa[FP] / (IrisSetosa[FP] + IrisSetosa[TN])
+VirginicaFPR = IrisVirginica[FP] / (IrisVirginica[FP] + IrisVirginica[TN])
+VersicolorFPR = IrisVersicolor[FP] / (IrisVersicolor[FP] + IrisVersicolor[TN])
 TotalFPR = (SetosaFPR + VirginicaFPR + VersicolorFPR) / 3
 print(f"Model False Positive Rate using confusion matirx is {TotalFPR}")
 
 #Model Recall
-SetosaRecall = IrisSetosa[0] / (IrisSetosa[0] +  IrisSetosa[2])
-VirginicaRecall = IrisVirginica[0] / (IrisVirginica[0] + IrisVirginica[2])
-VersicolorRecall = IrisVersicolor[0] / (IrisVersicolor[0] + IrisVersicolor[2])
+SetosaRecall = IrisSetosa[TP] / (IrisSetosa[TP] +  IrisSetosa[FN])
+VirginicaRecall = IrisVirginica[TP] / (IrisVirginica[TP] + IrisVirginica[FN])
+VersicolorRecall = IrisVersicolor[TP] / (IrisVersicolor[TP] + IrisVersicolor[FN])
 TotalRecall = (SetosaRecall + VirginicaRecall + VersicolorRecall) / 3
 print(f"Model Recall using confusion matirx is {TotalRecall}")
 
 #Model Precision
-SetosaPrecision = IrisSetosa[0] / (IrisSetosa[0] +  IrisSetosa[1])
-VirginicaPrecision = IrisVirginica[0] / (IrisVirginica[0] + IrisVirginica[1])
-VersicolorPrecision = IrisVersicolor[0] / (IrisVersicolor[0] + IrisVersicolor[1])
+SetosaPrecision = IrisSetosa[TP] / (IrisSetosa[TP] +  IrisSetosa[FP])
+VirginicaPrecision = IrisVirginica[TP] / (IrisVirginica[TP] + IrisVirginica[FP])
+VersicolorPrecision = IrisVersicolor[TP] / (IrisVersicolor[TP] + IrisVersicolor[FP])
 TotalPrecision = (SetosaPrecision + VirginicaPrecision + VersicolorPrecision) / 3
 print(f"Model Precision using confusion matirx is {TotalPrecision}")
 
 #Model F-Measure
-f1_score = (2 * TotalRecall * TotalPrecision) / (TotalRecall + TotalPrecision)
+f1_score = (FN * TotalRecall * TotalPrecision) / (TotalRecall + TotalPrecision)
 print(f"Model F-Measure using confusion matirx is {f1_score}")
+
+
+
+#Calculate Precision Confusion Matrix
+print(f'''
+###################################################################
+Prescion Calcualtion Using Precision Matrix Directly
+###################################################################
+''')
+IrisP = (matrix_confusion[0][0]) / sum(matrix_confusion[0])
+VP = (matrix_confusion[1][1]) / sum(matrix_confusion[1])
+MP = (matrix_confusion[2][2]) / sum(matrix_confusion[2])
+print(f"Model Precsion recalcu is {(IrisP + VP + MP) / 3}")
+
+print(f'''
+###################################################################
+{matrix_confusion}
+{IrisSetosa}
+{IrisVirginica}
+{IrisVersicolor}
+###################################################################
+''')
