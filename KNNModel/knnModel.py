@@ -11,7 +11,6 @@ FN = 2
 TN = 3
 
 #this is unused URL
-ClassURL = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.names"
 DataURL = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 
 # Get File and make a list of it
@@ -100,12 +99,3 @@ IrisP = (matrix_confusion[0][0]) / sum(matrix_confusion[0])
 VP = (matrix_confusion[1][1]) / sum(matrix_confusion[1])
 MP = (matrix_confusion[2][2]) / sum(matrix_confusion[2])
 print(f"Model Precsion recalcu is {(IrisP + VP + MP) / 3}")
-
-print(f'''
-###################################################################
-{matrix_confusion}
-{IrisSetosa}
-{IrisVirginica}
-{IrisVersicolor}
-###################################################################
-''')
