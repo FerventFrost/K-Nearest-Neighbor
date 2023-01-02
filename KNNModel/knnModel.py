@@ -99,3 +99,24 @@ IrisP = (matrix_confusion[0][0]) / sum(matrix_confusion[0])
 VP = (matrix_confusion[1][1]) / sum(matrix_confusion[1])
 MP = (matrix_confusion[2][2]) / sum(matrix_confusion[2])
 print(f"Model Precsion recalcu is {(IrisP + VP + MP) / 3}")
+
+
+#Find best K
+import numpy as np
+from matplotlib import pyplot as plt
+error_rate=[] #list that will store the average error rate value of k
+for i in range (1,31):  #Took the range of k from 1 to 30
+    clf=KNeighborsClassifier(n_neighbors=i)
+    clf.fit(TrainData,TrainLabel)
+    predict_i=clf.predict(TestData)
+    error_rate.append(np.mean(predict_i!=TestLabel))
+
+#plotting the error rate vs k graph
+plt.figure(figsize=(12,6))
+plt.plot(range(1,31),error_rate,marker="o",markerfacecolor="green",
+         linestyle="dashed",color="red",markersize=15)
+plt.title("Error rate vs k value",fontsize=20)
+plt.xlabel("k- values",fontsize=20)
+plt.ylabel("error rate",fontsize=20)
+plt.xticks(range(1,31))
+plt.show()
